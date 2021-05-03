@@ -20,12 +20,12 @@ b.disconnect
 
 s.boot
 
-
+*/
 AbstractResponderFunc.allEnabled
 OSCdef(\snakemove).clear; // remove all functions
 OSCdef(\snakeeat).clear; // remove all functions
 OSCdef(\snakemove).disable;
-OSCdef(\snakeeat).disable;*/
+OSCdef(\snakeeat).disable;
 
 
 (
