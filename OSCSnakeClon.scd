@@ -21,6 +21,9 @@ b.disconnect
 s.boot
 
 */
+
+s.boot
+
 AbstractResponderFunc.allEnabled
 OSCdef(\snakemove).clear; // remove all functions
 OSCdef(\snakeeat).clear; // remove all functions
@@ -108,6 +111,23 @@ SynthDef('closedhat', {
     )
 
 }).send(s);
+
+SynthDef('snaketest', {
+
+    var randomnumber, osc, env, output;
+
+	t = Tuning.et12;
+	randomnumber = {Rand.new(lo: 0.0, hi: 6.0)};
+	osc = SinOsc.ar({Select.kr(randomnumber, Scale.chromatic(t).cents)}, 1.0);
+	env = {Line.ar(1.0, 0, 0.1)};
+
+	output = (osc * env);
+
+    Out.ar(0,
+    Pan2.ar(output, 0)
+    )
+
+}).send(s);
 )
 
-Synth('snakemove', [freq: 440]);
+Synth('snaketest', [freq: 440]);
