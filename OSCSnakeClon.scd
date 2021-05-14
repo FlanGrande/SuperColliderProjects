@@ -22,7 +22,7 @@ s.boot
 
 */
 
-s.boot
+s.boot;
 
 AbstractResponderFunc.allEnabled
 OSCdef(\snakemove).clear; // remove all functions
@@ -30,6 +30,8 @@ OSCdef(\snakeeat).clear; // remove all functions
 OSCdef(\snakemove).disable;
 OSCdef(\snakeeat).disable;
 
+
+OSC.def(\snaketest)
 
 (
 OSCdef(\snakemove,
@@ -46,6 +48,15 @@ OSCdef(\snakeeat,
 		Synth('snakeeat', [freq: msg[1]])
 }, '/eat');
 
+OSCdef(\snaketest,
+	{
+        |msg|
+		Post << msg;
+		Synth('snaketest', [freq: msg[1]]);
+		if([false, true].choose, {Synth('\drums', [\freq: ~bass]);}, {Synth('\drums', [\freq: ~snare]);});
+}, '/test');
+)
+(
 SynthDef('snakemove', {
 	|freq|
 	var osc, env, output;
@@ -111,15 +122,16 @@ SynthDef('closedhat', {
     )
 
 }).send(s);
+)
 
+(
 SynthDef('snaketest', {
-
-    var randomnumber, osc, env, output;
+	var osc, env, output;
+	var randomnumber = {Rand.new(lo: 1.0, hi: 6.0)};
 
 	t = Tuning.et12;
-	randomnumber = {Rand.new(lo: 0.0, hi: 6.0)};
 	osc = SinOsc.ar({Select.kr(randomnumber, Scale.chromatic(t).cents)}, 1.0);
-	env = {Line.ar(1.0, 0, 0.1)};
+	env = {Line.ar(1.0, 0, 0.1, doneAction: 2)};
 
 	output = (osc * env);
 
@@ -130,4 +142,19 @@ SynthDef('snaketest', {
 }).send(s);
 )
 
-Synth('snaketest', [freq: 440]);
+(
+SynthDef(\drums, { |freq|
+	var env = Env.perc(level: 0.1, releaseTime: 0.2).kr(doneAction: Done.freeSelf);
+	var sig = WhiteNoise.ar * env;
+	var trigger = Impulse.ar(freq);
+	sig = Latch.ar(sig, trigger);
+	Out.ar(0, [sig, sig]);
+}).send(s);
+
+~bass = 500; ~snare = 10000;
+)
+
+
+Synth('openhat', [freq: 440]);
+Synth('closedhat', [freq: 440]);
+Synth('\drums', [\freq: ~bass]);

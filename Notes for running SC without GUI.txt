@@ -1,0 +1,24 @@
+Launch server:
+.\scsynth.exe -u 57110
+
+Help:
+.\scsynth.exe -h
+
+
+
+
+THIS WORKS:
+.\sclang.exe
+
+When this runs, it reads and executes the code written in: C:\Users\djfer\AppData\Local\SuperCollider\startup.scd
+Using Server.waitForBoot({function}) we can load the OSC receivers and several SynthDefs.
+
+
+TO DO:
+ - Run sclang.exe from Godot.
+ - Check if we can run sclang.exe and scsynth.exe without installing SuperCollider.
+	Likely to not work, and even if it does, there's no SuperCollider folder on AppData.
+ - If that doesn't work, check if we can install SC using Inno.
+ - Export SnakeClon and try to see if it works.
+ - Figure out how to use user folder and AppData files if necessary.
+	We need to install the startup.scd file into AppData, but for that we need to install SC...
