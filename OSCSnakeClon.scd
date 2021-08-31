@@ -55,7 +55,8 @@ OSCdef(\snaketest,
 		Synth('snaketest', [freq: msg[1]]);
 		if([false, true].choose, {Synth('\drums', [\freq: ~bass]);}, {Synth('\drums', [\freq: ~snare]);});
 }, '/test');
-)
+);
+
 (
 SynthDef('snakemove', {
 	|freq|
@@ -122,7 +123,7 @@ SynthDef('closedhat', {
     )
 
 }).send(s);
-)
+);
 
 (
 SynthDef('snaketest', {
@@ -140,7 +141,7 @@ SynthDef('snaketest', {
     )
 
 }).send(s);
-)
+);
 
 (
 SynthDef(\drums, { |freq|
@@ -152,7 +153,7 @@ SynthDef(\drums, { |freq|
 }).send(s);
 
 ~bass = 500; ~snare = 10000;
-)
+);
 
 
 Synth('openhat', [freq: 440]);
