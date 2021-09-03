@@ -201,10 +201,82 @@ Pdef(\walking_bass,
 	Pbind(
 		\instrument, \snakebass,
 		\dur, Pseq([Prand([0.5])], inf),
-		\degree, Pseq([Prand([4, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5])], inf),
+		\degree, Pseq([1, 2, 4, 7, 5, 4, 3, 6, Prand([4,7])], inf),
 		\scale, Scale.harmonicMinor,
 		\octave, 2
 	)
+).play(quant: 4);
+);
+
+(
+var dur, notes, notesEnd, scale, scaleEnd, octave, masterTranspose;
+dur = 0.35;
+notes = Pseq([0, 2, 4, 5, 6, 5, 4, 2]);
+notesEnd = Pseq([0, 4, 5, 6, 7, 5, 4, 2]);
+scale = Scale.mixolydian;
+scaleEnd = Scale.chromatic;
+octave = 3;
+masterTranspose = -3;
+
+Pdef(\walking_blues_bass,
+	Pseq([
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 5 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, Pseq(notes.list.copyRange(0, 3)),
+			\ctranspose, 7 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, Pseq(notes.list.copyRange(0, 3)),
+			\ctranspose, 5 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notesEnd,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scaleEnd,
+			\octave, octave
+		)
+	], inf)
 ).play(quant: 4);
 );
 
@@ -245,3 +317,75 @@ Pan2.ar(osc2, 0)
 t = Synth('basic-FM',['freq1', 40, 'freq2', 120, 'amp1', 100]);
 
 t.free;
+
+(
+	var dur, notes, notesEnd, scale, scaleEnd, octave, masterTranspose;
+	dur = 0.35;
+	notes = Pseq([0, 2, 4, 5, 6, 5, 4, 2]);
+	notesEnd = Pseq([0, 4, 5, 6, 7, 5, 4, 2]);
+	scale = Scale.mixolydian;
+	scaleEnd = Scale.chromatic;
+	octave = 3;
+	masterTranspose = -3;
+
+	t = Pseq([
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 5 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notes,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, Pseq(notes.list.copyRange(0, 3)),
+			\ctranspose, 7 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, Pseq(notes.list.copyRange(0, 3)),
+			\ctranspose, 5 + masterTranspose,
+			\scale, scale,
+			\octave, octave
+		),
+		Pbind(
+			\instrument, \snakebass,
+			\dur, dur,
+			\degree, notesEnd,
+			\ctranspose, 0 + masterTranspose,
+			\scale, scaleEnd,
+			\octave, octave
+		)
+	], inf).asStream
+);
+
+t.next(Event.new).play;
