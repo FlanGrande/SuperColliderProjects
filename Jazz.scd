@@ -24,7 +24,7 @@ SynthDef('snakebass', {
 (
 var dur, amp, notes2, notes5, notes1_1, notes1_2, notesEnd, scale, scaleEnd, octave, masterTranspose;
 dur = Pseq([0.5], 4);
-amp = Pseq([1.5, 1.0, 1.5, 1.0], 1);
+amp = Pseq([1.2, 1.0, 1.1, 1.0], 1);
 notes2 = Pseq([1, 2, 3, 4]);
 notes5 = Pseq([5, 3, 2, 1]);
 notes1_1 = Pseq([0, 5, 6, 5]);
@@ -89,7 +89,7 @@ SynthDef(\pad, { |freq|
 			{ExpRand(0.005, 0.05)}!2,
 			0.02!2
 		);
-		sum = Vibrato.ar(sum + temp, 4, Line.kr(0.0, 0.06, 4.0, 1.0));
+		sum = Vibrato.ar(sum + temp, 2, Line.kr(0.0, 0.02, 4.0, 1.0));
 	};
 
 	sum = sum * env;
@@ -111,7 +111,8 @@ SynthDef('harp', {
 	env = EnvGen.kr(Env.perc(attackTime: 0.001, releaseTime: 2.0, level: amp, curve: SinOsc.kr(440.0, 0.0, 1.0)), doneAction: Done.freeSelf);
 	//env = Env.perc(level: 0.6, releaseTime: 0.4).kr(doneAction: Done.freeSelf);
 	//env = Env.sine(0.6, 2.0).kr(doneAction: Done.freeSelf);
-	output = LPF.ar(osc * env, freq, LinExp.ar(osc * env, 1.0, 0.0, 2.0, 1.0));
+	output = LPF.ar(osc * env, freq, LinExp.ar(osc * env, 1.0, 0.0, 1.0, 1.0));
+	output = Vibrato.ar(output, 4, Line.kr(0.0, 0.2, 1.5, 1.0));
 	//output = LPF.ar(osc * env, freq, Line.ar(4.0, 0.2, 0.5));
 
 	//env = {Line.ar(900, 600, 0.5, 0.1, doneAction: Done.freeSelf)};
@@ -123,13 +124,19 @@ SynthDef('harp', {
 }).send(s);
 )
 
+Synth(\harp, [\freq: 1200, \amp: 1.0]);
+
 (
 var dur, chord2, chord5, chord1_1, chord1_2, scale, octave, masterTranspose;
 dur = Pseq([2.0], 1);
-chord2 = [3, 5, 7, 9, 11, 13];
+/*chord2 = [3, 5, 7, 9, 11, 13];
 chord5 = [3, 5, 6, 9, 11, 12];
 chord1_1 = [2, 4, 6, 8, 11];
-chord1_2 = [2, 4, 6, 8];
+chord1_2 = [-2, 2, 4, 7];*/
+chord2 = [1, 7, 10, 12];
+chord5 = [4, 8, 10, 13];
+chord1_1 = [0, 4, 6, 9];
+chord1_2 = [-2, 2, 4, 7];
 scale = Scale.major;
 octave = 5;
 masterTranspose = 0;
@@ -180,9 +187,9 @@ Pdef(\walking_jazz_chords,
 var dur, chord2, chord5, chord1_1, chord1_2, scale, octave, masterTranspose;
 dur = Pseq([2.0], 1);
 chord2 = [3, 5, 7];
-chord5 = [3, 5, 6];
+chord5 = [1, 5, 6];
 chord1_1 = [2, 4, 6];
-chord1_2 = [2, 4, 6];
+chord1_2 = [0, 2, 4];
 scale = Scale.major;
 octave = 5;
 masterTranspose = 0;
@@ -231,7 +238,7 @@ Pdef(\walking_jazz_chords2,
 
 /* Sound of rain or an old vynil playing */
 { Dust.ar(MouseX.kr(1,10000,1), 0.4) }.scope(1, zoom:4);
-{ Dust2.ar(MouseX.kr(1,10000,1), 0.4) }.scope(1, zoom:4);
+{ LPF.ar(Dust2.ar(MouseX.kr(1,10000,1), 0.4)) }.scope(1, zoom:4);
 
 /* For whatever reason this default synth sounds a bit like a guitar */
 (
@@ -246,3 +253,8 @@ p = Pbind(
 	\strum, 0.06
 ).play(quant: 2);
 )
+
+s.reboot
+
+{Klank.ar(`[[800, 1071, 1353, 1723], nil, [1, 1, 1, 1]], Dust2.ar())}.scope
+{ Klank.ar(`[[440, 520], nil, [1, 1, 1, 1]], Dust.ar(8, 0.1)) }.play;

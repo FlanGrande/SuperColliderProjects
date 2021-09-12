@@ -389,3 +389,110 @@ t.free;
 );
 
 t.next(Event.new).play;
+
+// Examples of Env
+
+*linen(attackTime, sustainTime, releaseTime, level, curve)
+
+Env.linen(1, 2, 3, 0.6).test.plot;
+Env.linen(0.1, 0.2, 0.1, 0.6).test.plot;
+Env.linen(1, 2, 3, 0.6, 'sine').test.plot;
+Env.linen(1, 2, 3, 0.6, 'welch').test.plot;
+
+*triangle(duration, level)
+
+Env.triangle(1, 1).test.plot;
+
+*sine(duration, level) // hanning
+
+Env.sine(1,1).test.plot;
+
+*perc(attackTime, releaseTime, peakLevel, curve)
+
+Env.perc(0.05, 1, 1, 0).test.plot;   // linear
+Env.perc(0.05, 1, 1, -4).test.plot;  // exponential
+Env.perc(0.001, 1, 1, -4).test.plot; // sharper attack
+Env.perc(0.001, 1, 1, -8).test.plot; // change curvature
+Env.perc(1, 0.01, 1, -4).test.plot;  // reverse envelope
+
+// In order to use these in real life you need EnvGen
+
+{SinOsc.ar(800, 0, 0.5) * EnvGen.kr(Env.perc (0.001, 1), 1.0)}.play;
+
+// Another way of writing the same thing:
+(
+ {
+  var freq, env;
+  freq = 800;
+  env = EnvGen.kr(Env.perc(0.001, 1), 1.0);
+  SinOsc.ar(freq, mul: env);
+ }.play
+)
+
+
+
+Env.perc(0.001, 1).test.plot; // this is sharp and nice attack
+
+{SinOsc.ar(800, 0, 0.5) * EnvGen.kr(Env.perc (0.001, 1), 1.0)}.play; // this should be the same, but it isn't...
+
+// And if I use an envelope trigger, the following notes sound correct, but the first is still wrong:
+(
+ {
+  var freq, trigger, env;
+  freq = 800;
+  trigger = Impulse.kr(1/2); // trigger a note every 2 seconds
+  env = EnvGen.kr(Env.perc(0.001, 1), trigger);
+  SinOsc.ar(freq, mul: env);
+ }.play
+)
+
+
+// Additive Synthesis (I believe this is useful if I want to emulate the timbre of an instrument)
+/* TRUMPET */
+(
+var freq = 440;
+{SinOsc.ar(freq,0,0.1)
+	+ SinOsc.ar(freq*2,0,0.01)
+	+ SinOsc.ar(freq*3,0,0.2)
+	+ SinOsc.ar(freq*4,0,0.4)
+	+ SinOsc.ar(freq*5,0,0.3)}.play
+)
+
+/* SAX */
+(
+var freq = 440;
+{SinOsc.ar(freq,0,0.5)
+	+ SinOsc.ar(freq*2,0,0.4)
+	+ SinOsc.ar(freq*3,0,0.1)
+	+ SinOsc.ar(freq*4,0,0.01)
+	+ SinOsc.ar(freq*5,0,0.01)}.play
+)
+
+{SinOsc.ar(440,0,0.5) + SinOsc.ar(870,0,0.3) + SinOsc.ar(1330,0,0.1)}.play // A4 + 2 slightly detuned harmonics
+
+(
+{
+ var fund = 220;
+ Mix.ar(
+		[
+		SinOsc.ar(fund*1),
+		SinOsc.ar(fund*2),
+		SinOsc.ar(fund*3),
+		SinOsc.ar(fund*4),
+		SinOsc.ar(fund*5),
+		SinOsc.ar(fund*6)
+		]
+        ) * 0.1  // scale amplitude down to avoid clipping
+}.play
+)
+
+(
+{Mix.ar(
+	Array.fill(20,
+		{arg count;
+		 var harm;
+		 harm = (count + 1) * 110;
+			SinOsc.ar(harm)*1/(count+1) // higher harmonics will be softer
+		}))*0.5 // global amplitude scaling
+}.play
+)
