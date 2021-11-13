@@ -234,13 +234,13 @@ Pdef(\walking_jazz_chords2,
 
 /* It seems silly but maybe I can use code similar to this to make a NOM sound? */
 { VarSaw.ar(VarSaw.kr(0.2, 0, 0.2, 400,800),0,0.2,0.1) }.scope(1, zoom: 4);
-{ VarSaw.ar(XLine.kr(100,15000,6),0,0.2,0.1) }.scope(1, zoom: 4);
+{ VarSaw.ar(MouseX.kr(100,15000,6),0,0.2,0.1) }.scope(1, zoom: 4);
 
 /* Sound of rain or an old vynil playing */
 { Dust.ar(MouseX.kr(1,10000,1), 0.4) }.scope(1, zoom:4);
 { LPF.ar(Dust2.ar(MouseX.kr(1,10000,1), 0.4)) }.scope(1, zoom:4);
 
-/* For whatever reason this default synth sounds a bit like a guitar */
+/* For whatever reason this default synth sounds a bit like a guitar when strum */
 (
 p = Pbind(
     // array is "multichannel expanded" into one Synth each
