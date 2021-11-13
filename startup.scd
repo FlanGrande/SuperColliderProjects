@@ -1,3 +1,4 @@
+s.quit; // Does this actually help?
 s.boot;
 
 s.waitForBoot({
@@ -26,7 +27,8 @@ s.waitForBoot({
 		jazz_chords_amp,
 		jazz_chords_chord2,
 		jazz_chords_chord5,
-		jazz_chords_chord1,
+		jazz_chords_chord1_1,
+		jazz_chords_chord1_2,
 		jazz_chords_scale,
 		jazz_chords_octave,
 		jazz_chords_masterTranspose,
@@ -66,9 +68,10 @@ s.waitForBoot({
 
 	jazz_chords_dur = Pseq([2.0], 1);
 	jazz_chords_amp = Pseq([0.5], 1);
-	jazz_chords_chord2 = [3, 5, 7];
-	jazz_chords_chord5 = [3, 5, 6];
-	jazz_chords_chord1 = [2, 4, 6];
+	jazz_chords_chord2 = [1, 7, 10, 12];
+	jazz_chords_chord5 = [4, 8, 10, 13];
+	jazz_chords_chord1_1 = [0, 4, 6, 9];
+	jazz_chords_chord1_2 = [-2, 2, 4, 7];
 	jazz_chords_scale = Scale.major;
 	jazz_chords_octave = 4;
 	jazz_chords_masterTranspose = 0;
@@ -118,6 +121,27 @@ s.waitForBoot({
 
 		sum = sum * env;
 		Out.ar(0, sum);
+	}).send(s);
+
+
+	SynthDef(\snakeharp, { |freq, amp|
+		var osc, env, output;
+
+		osc = {LFTri.ar(freq)};
+
+		env = EnvGen.kr(Env.perc(attackTime: 0.001, releaseTime: 2.0, level: amp, curve: SinOsc.kr(440.0, 0.0, 1.0)), doneAction: Done.freeSelf);
+		//env = Env.perc(level: 0.6, releaseTime: 0.4).kr(doneAction: Done.freeSelf);
+		//env = Env.sine(0.6, 2.0).kr(doneAction: Done.freeSelf);
+		output = LPF.ar(osc * env, freq, LinExp.ar(osc * env, 1.0, 0.0, 1.0, 1.0));
+		output = Vibrato.ar(output, 4, Line.kr(0.0, 0.2, 1.5, 1.0));
+		//output = LPF.ar(osc * env, freq, Line.ar(4.0, 0.2, 0.5));
+
+		//env = {Line.ar(900, 600, 0.5, 0.1, doneAction: Done.freeSelf)};
+		//output = BPF.ar(osc * env, 440.0, 0.8 ,0.08);
+
+		Out.ar(0,
+			Pan2.ar(output, 0)
+		)
 	}).send(s);
 
 	SynthDef(\snakeblip, { |freq|
@@ -272,40 +296,44 @@ s.waitForBoot({
 
 	jazz_chords_seq = Pseq([
 		Pbind(
-			\instrument, \snakepad,
+			\instrument, \snakeharp,
 			\dur, jazz_chords_dur,
 			\amp, jazz_chords_amp,
 			\degree, jazz_chords_chord2,
 			\ctranspose, 0 + jazz_chords_masterTranspose,
 			\scale, jazz_chords_scale,
-			\octave, jazz_chords_octave
+			\octave, jazz_chords_octave,
+			\strum, 0.4 / jazz_chords_chord2.size
 		),
 		Pbind(
-			\instrument, \snakepad,
+			\instrument, \snakeharp,
 			\dur, jazz_chords_dur,
 			\amp, jazz_chords_amp,
 			\degree, jazz_chords_chord5,
 			\ctranspose, 0 + jazz_chords_masterTranspose,
 			\scale, jazz_chords_scale,
-			\octave, jazz_chords_octave
+			\octave, jazz_chords_octave,
+			\strum, 0.4 / jazz_chords_chord5.size
 		),
 		Pbind(
-			\instrument, \snakepad,
+			\instrument, \snakeharp,
 			\dur, jazz_chords_dur,
 			\amp, jazz_chords_amp,
-			\degree, jazz_chords_chord1,
+			\degree, jazz_chords_chord1_1,
 			\ctranspose, 0 + jazz_chords_masterTranspose,
 			\scale, jazz_chords_scale,
-			\octave, jazz_chords_octave
+			\octave, jazz_chords_octave,
+			\strum, 0.4 / jazz_chords_chord1_1.size
 		),
 		Pbind(
-			\instrument, \snakepad,
+			\instrument, \snakeharp,
 			\dur, jazz_chords_dur,
 			\amp, jazz_chords_amp,
-			\degree, jazz_chords_chord1,
+			\degree, jazz_chords_chord1_2,
 			\ctranspose, 0 + jazz_chords_masterTranspose,
 			\scale, jazz_chords_scale,
-			\octave, jazz_chords_octave
+			\octave, jazz_chords_octave,
+			\strum, 0.4 / jazz_chords_chord1_2.size
 		)
 	], inf).asStream;
 
